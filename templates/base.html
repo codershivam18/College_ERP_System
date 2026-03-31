@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}School ERP{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #ec4899;
+            --accent: #8b5cf6;
+            --background: #f8fafc;
+            --text: #1e293b;
+            --glass: rgba(255, 255, 255, 0.7);
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .brand-text {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+        }
+
+        /* Glassmorphism Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
+            z-index: 1000;
+            padding: 2rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 2rem 3rem;
+            min-height: 100vh;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-link i {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .btn-premium {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none;
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-premium:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+            color: white;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        /* Advanced Header */
+        .top-navbar {
+            height: 70px;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            position: sticky;
+            top: 20px;
+            z-index: 999;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        .search-bar {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            width: 300px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            width: 400px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .notification-bell {
+            position: relative;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+        .notification-bell:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--secondary);
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        @media (max-width: 991px) {
+            .sidebar { width: 80px; padding: 2rem 0.5rem; }
+            .sidebar .nav-text, .sidebar .brand-text { display: none; }
+            .sidebar small { display: none !important; }
+            .main-content { margin-left: 80px; }
+            .nav-link i { margin-right: 0; }
+            .search-bar { width: 150px; }
+            .search-bar:focus { width: 200px; }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="sidebar">
+        <div class="mb-5 px-3">
+            <h3 class="brand-text text-primary m-0" style="font-size: 1.2rem; line-height: 1.2;">
+                <i class="fas fa-graduation-cap me-2"></i>Maa Saraswati Devi<br>Shiksha Sansthan
+            </h3>
+            <small class="text-muted d-block mt-2" style="font-size: 0.7rem;">Patauhan, Gola Bazar, GKP</small>
+        </div>
+        
+        <nav>
+            <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                <i class="fas fa-chart-line"></i>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            
+            {% if user.is_teacher or user.is_admin %}
+            <a href="{% url 'attendance_list' %}" class="nav-link {% if 'attendance' in request.path %}active{% endif %}">
+                <i class="fas fa-calendar-check"></i>
+                <span class="nav-text">Attendance</span>
+            </a>
+            <a href="{% url 'result_list' %}" class="nav-link {% if 'result' in request.path %}active{% endif %}">
+                <i class="fas fa-file-invoice"></i>
+                <span class="nav-text">Results</span>
+            </a>
+            {% endif %}
+
+            {% if user.is_student %}
+            <a href="{% url 'student_attendance' %}" class="nav-link">
+                <i class="fas fa-user-check"></i>
+                <span class="nav-text">My Attendance</span>
+            </a>
+            <a href="{% url 'student_results' %}" class="nav-link">
+                <i class="fas fa-poll"></i>
+                <span class="nav-text">My Results</span>
+            </a>
+            <a href="{% url 'student_fees' %}" class="nav-link">
+                <i class="fas fa-wallet"></i>
+                <span class="nav-text">Fees Status</span>
+            </a>
+            {% endif %}
+
+            <div class="mt-auto pt-5">
+                <hr class="opacity-25 mx-2">
+                <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+                    {% csrf_token %}
+                </form>
+                <a href="javascript:void(0)" onclick="document.getElementById('logout-form').submit();" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="nav-text">Logout</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <header class="top-navbar fade-in">
+            <div class="d-flex align-items-center">
+                <div class="input-group d-none d-md-flex">
+                    <span class="input-group-text bg-transparent border-0"><i class="fas fa-search text-muted"></i></span>
+                    <input type="text" class="search-bar" placeholder="Search for students, subjects...">
+                </div>
+            </div>
+            
+            <div class="d-flex align-items-center gap-3">
+                <div class="notification-bell">
+                    <i class="far fa-bell"></i>
+                    <div class="notification-dot"></div>
+                </div>
+                
+                <div class="vr mx-2 opacity-50" style="height: 24px;"></div>
+                
+                <div class="d-flex align-items-center">
+                    <div class="me-3 text-end d-none d-md-block">
+                        <h6 class="m-0 fw-bold">{{ user.username }}</h6>
+                        <small class="text-muted" style="font-size: 0.75rem;">
+                            {% if user.is_teacher %}Teacher{% elif user.is_student %}Student{% else %}Admin{% endif %}
+                        </small>
+                    </div>
+                    {% if user.profile_pic %}
+                    <img src="{{ user.profile_pic.url }}" alt="Profile" class="rounded-circle shadow-sm" width="45" height="45">
+                    {% else %}
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center shadow-sm" style="width: 45px; height: 45px; font-weight: 700;">
+                        {{ user.username|first|upper }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </header>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show glass-card border-0 mb-4" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

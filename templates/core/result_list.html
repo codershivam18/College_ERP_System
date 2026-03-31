@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Manage Results - School ERP{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="glass-card mb-4 fade-in">
+            <h4 class="mb-4">Input New Result</h4>
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit" class="btn btn-premium w-100 mt-3">Submit Result</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="glass-card mb-4 fade-in" style="animation-delay: 0.1s;">
+            <h4 class="mb-4">Result Records</h4>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Student</th>
+                            <th>Subject</th>
+                            <th>Marks</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for res in results %}
+                        <tr>
+                            <td class="fw-bold">{{ res.student.user.username }}</td>
+                            <td>{{ res.subject.name }}</td>
+                            <td>{{ res.marks_obtained }} / {{ res.total_marks }}</td>
+                            <td>{{ res.exam_date }}</td>
+                            <td>
+                                <a href="#" class="btn btn-sm btn-outline-primary border-0"><i class="fas fa-edit"></i></a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4">No results recorded yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

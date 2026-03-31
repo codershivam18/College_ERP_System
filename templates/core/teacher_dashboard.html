@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Teacher Dashboard - School ERP{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-5 fade-in" style="animation-delay: 0.1s;">
+    <div class="col-md-3">
+        <div class="glass-card text-center">
+            <div class="stat-icon bg-primary-subtle text-primary mx-auto">
+                <i class="fas fa-users"></i>
+            </div>
+            <h5 class="text-muted mb-1">Total Students</h5>
+            <h2 class="fw-bold">{{ total_students }}</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="glass-card text-center">
+            <div class="stat-icon bg-success-subtle text-success mx-auto">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <h5 class="text-muted mb-1">My Classes</h5>
+            <h2 class="fw-bold">{{ classrooms.count }}</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="glass-card text-center">
+            <div class="stat-icon bg-warning-subtle text-warning mx-auto">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <h5 class="text-muted mb-1">Pending Results</h5>
+            <h2 class="fw-bold">4</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="glass-card text-center">
+            <div class="stat-icon bg-info-subtle text-info mx-auto">
+                <i class="fas fa-bell"></i>
+            </div>
+            <h5 class="text-muted mb-1">Notifications</h5>
+            <h2 class="fw-bold">2</h2>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="glass-card mb-4 fade-in" style="animation-delay: 0.2s;">
+            <h4 class="mb-4">Class Distribution</h4>
+            <div style="height: 250px;">
+                <canvas id="classChart"></canvas>
+            </div>
+            <div class="mt-4">
+                <small class="text-muted">Breakdown of students per assigned class.</small>
+            </div>
+        </div>
+        
+        <div class="glass-card fade-in" style="animation-delay: 0.3s;">
+            <h4 class="mb-4">Quick Links</h4>
+            <div class="list-group list-group-flush">
+                <a href="{% url 'attendance_list' %}" class="list-group-item list-group-item-action border-0 px-0 py-2">
+                    <i class="fas fa-calendar-check text-primary me-2"></i> Mark Attendance
+                </a>
+                <a href="{% url 'result_list' %}" class="list-group-item list-group-item-action border-0 px-0 py-2">
+                    <i class="fas fa-poll text-success me-2"></i> Input Results
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="glass-card mb-4 fade-in" style="animation-delay: 0.2s;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="m-0">Classroom Management</h4>
+                <a href="{% url 'attendance_list' %}" class="btn btn-premium btn-sm">Record Attendance</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Class Name</th>
+                            <th>Section</th>
+                            <th>Students</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for classroom in classrooms %}
+                        <tr>
+                            <td class="fw-bold">{{ classroom.name }}</td>
+                            <td><span class="badge bg-secondary-subtle text-secondary">{{ classroom.section }}</span></td>
+                            <td>{{ classroom.students.count }}</td>
+                            <td>
+                                <a href="{% url 'attendance_list' %}?classroom={{ classroom.id }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">Mark Attendance</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4">No classes assigned yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ class_names|json_script:"class-names" }}
+{{ class_student_counts|json_script:"class-counts" }}
+<script>
+    const classNames = JSON.parse(document.getElementById('class-names').textContent);
+    const classCounts = JSON.parse(document.getElementById('class-counts').textContent);
+
+    const ctx = document.getElementById('classChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: classNames,
+            datasets: [{
+                label: 'Students',
+                data: classCounts,
+                backgroundColor: '#6366f1',
+                borderRadius: 8,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Mark Attendance - School ERP{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="glass-card mb-4 fade-in">
+            <h4 class="mb-4">Mark New Attendance</h4>
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit" class="btn btn-premium w-100 mt-3">Record Attendance</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="glass-card mb-4 fade-in" style="animation-delay: 0.1s;">
+            <h4 class="mb-4">Attendance History</h4>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Student</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Recorded By</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in attendances %}
+                        <tr>
+                            <td class="fw-bold">{{ record.student.user.get_full_name|default:record.student.user.username }}</td>
+                            <td>{{ record.date|date:"M d, Y" }}</td>
+                            <td>
+                                <span class="badge {% if record.status == 'Present' %}bg-success-subtle text-success{% else %}bg-danger-subtle text-danger{% endif %} px-3 py-2 rounded-pill">
+                                    {{ record.status }}
+                                </span>
+                            </td>
+                            <td>{{ record.recorded_by|default:"Admin" }}</td>
+                            <td>
+                                <a href="{% url 'delete_attendance' record.pk %}" class="btn btn-sm btn-outline-danger border-0" onclick="return confirm('Delete this record?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4">No records found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

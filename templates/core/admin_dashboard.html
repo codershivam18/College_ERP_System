@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - School ERP{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-5 fade-in" style="animation-delay: 0.1s;">
+    <div class="col-md-3">
+        <div class="glass-card text-center">
+            <div class="stat-icon bg-primary-subtle text-primary mx-auto">
+                <i class="fas fa-user-graduate"></i>
+            </div>
+            <h5 class="text-muted mb-1">Students</h5>
+            <h2 class="fw-bold">{{ total_students }}</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="glass-card text-center">
+            <div class="stat-icon bg-success-subtle text-success mx-auto">
+                <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+            <h5 class="text-muted mb-1">Teachers</h5>
+            <h2 class="fw-bold">{{ total_teachers }}</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="glass-card text-center">
+            <div class="stat-icon bg-info-subtle text-info mx-auto">
+                <i class="fas fa-school"></i>
+            </div>
+            <h5 class="text-muted mb-1">Classrooms</h5>
+            <h2 class="fw-bold">{{ classroom_count }}</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="glass-card text-center">
+            <div class="stat-icon bg-warning-subtle text-warning mx-auto">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <h5 class="text-muted mb-1">Revenue</h5>
+            <h2 class="fw-bold">${{ total_fees_collected|floatformat:0 }}</h2>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-7">
+        <div class="glass-card mb-4 fade-in" style="animation-delay: 0.2s;">
+            <h4 class="mb-4">System Overview</h4>
+            <div style="height: 300px;">
+                <canvas id="adminChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="glass-card mb-4 fade-in" style="animation-delay: 0.3s;">
+            <h4 class="mb-4">System Management</h4>
+            <div class="d-grid gap-3">
+                <a href="/admin/" class="btn btn-premium py-3 rounded-4">
+                    <i class="fas fa-cogs me-2"></i> Admin Portal
+                </a>
+                <button class="btn btn-outline-primary py-3 rounded-4 border-2 fw-bold">
+                    <i class="fas fa-envelope me-2"></i> Notifications
+                </button>
+                <div class="mt-2">
+                    <h6 class="text-muted mb-3">Quick Report</h6>
+                    <div class="p-3 bg-light rounded-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Attendance Rate</span>
+                            <span class="fw-bold">92%</span>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar bg-success" style="width: 92%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ total_students|json_script:"total-students" }}
+{{ total_teachers|json_script:"total-teachers" }}
+{{ classroom_count|json_script:"classroom-count" }}
+<script>
+    const sCount = JSON.parse(document.getElementById('total-students').textContent);
+    const tCount = JSON.parse(document.getElementById('total-teachers').textContent);
+    const cCount = JSON.parse(document.getElementById('classroom-count').textContent);
+
+    const ctx = document.getElementById('adminChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Students', 'Teachers', 'Classrooms'],
+            datasets: [{
+                label: 'System Metrics',
+                data: [sCount, tCount, cCount],
+                backgroundColor: ['#6366f1', '#10b981', '#0ea5e9'],
+                borderRadius: 12,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}My Results - School ERP{% endblock %}
+
+{% block content %}
+<div class="glass-card fade-in">
+    <h3 class="mb-4">Academic Performance</h3>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Subject</th>
+                    <th>Exam Date</th>
+                    <th>Marks Obtained</th>
+                    <th>Total Marks</th>
+                    <th>Percentage</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for res in results %}
+                <tr>
+                    <td class="fw-bold text-primary">{{ res.subject.name }}</td>
+                    <td>{{ res.exam_date|date:"M d, Y" }}</td>
+                    <td>{{ res.marks_obtained }}</td>
+                    <td>{{ res.total_marks }}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <span class="me-2 fw-bold">85%</span>
+                            <div class="progress flex-grow-1" style="height: 6px;">
+                                <div class="progress-bar bg-success" style="width: 85%;"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-muted small">{{ res.remarks|default:"Excellent performance!" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-5">No results available yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard - School ERP{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-5 fade-in" style="animation-delay: 0.1s;">
+    <div class="col-md-3">
+        <div class="glass-card text-center">
+            <div class="stat-icon bg-primary-subtle text-primary mx-auto">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <h5 class="text-muted mb-1">Attendance</h5>
+            <h2 class="fw-bold">{{ attendance_count }}/{{ total_attendance }}</h2>
+            <div class="progress mt-2" style="height: 6px;">
+                <div class="progress-bar bg-primary" style="width: 85%"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="glass-card text-center">
+            <div class="stat-icon bg-success-subtle text-success mx-auto">
+                <i class="fas fa-file-invoice"></i>
+            </div>
+            <h5 class="text-muted mb-1">Avg Marks</h5>
+            <h2 class="fw-bold">88.5%</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="glass-card text-center">
+            <div class="stat-icon bg-warning-subtle text-warning mx-auto">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <h5 class="text-muted mb-1">Fee Status</h5>
+            <h2 class="fw-bold">{% if pending_fees %}Pending{% else %}Paid{% endif %}</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="glass-card text-center">
+            <div class="stat-icon bg-info-subtle text-info mx-auto">
+                <i class="fas fa-certificate"></i>
+            </div>
+            <h5 class="text-muted mb-1">Rank</h5>
+            <h2 class="fw-bold">#4</h2>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="glass-card mb-4 fade-in" style="animation-delay: 0.2s;">
+            <h4 class="mb-4">Attendance</h4>
+            <div style="height: 200px;">
+                <canvas id="attendanceChart"></canvas>
+            </div>
+            <div class="mt-4 text-center">
+                <span class="badge bg-primary-subtle text-primary p-2 px-3 rounded-pill d-block mb-2">Present: {{ attendance_count }}</span>
+                <span class="badge bg-danger-subtle text-danger p-2 px-3 rounded-pill d-block">Absent: {{ total_attendance|add:"-attendance_count" }}</span>
+            </div>
+        </div>
+        
+        <div class="glass-card fade-in" style="animation-delay: 0.3s;">
+            <h4 class="mb-4">Quick Actions</h4>
+            <div class="list-group list-group-flush">
+                <a href="{% url 'student_attendance' %}" class="list-group-item list-group-item-action border-0 px-0 py-2">
+                    <i class="fas fa-calendar-check text-primary me-2"></i> My Attendance
+                </a>
+                <a href="{% url 'student_fees' %}" class="list-group-item list-group-item-action border-0 px-0 py-2">
+                    <i class="fas fa-wallet text-warning me-2"></i> Pay Fees
+                </a>
+                <a href="#" class="list-group-item list-group-item-action border-0 px-0 py-2">
+                    <i class="fas fa-download text-info me-2"></i> ID Card
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-9">
+        <div class="glass-card mb-4 fade-in" style="animation-delay: 0.3s;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="m-0">Recent Results</h4>
+                <a href="{% url 'student_results' %}" class="btn btn-premium btn-sm">View All</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Subject</th>
+                            <th>Date</th>
+                            <th>Marks</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in recent_results %}
+                        <tr>
+                            <td class="fw-bold">{{ result.subject.name }}</td>
+                            <td>{{ result.exam_date|date:"M d, Y" }}</td>
+                            <td>{{ result.marks_obtained }}/{{ result.total_marks }}</td>
+                            <td>
+                                <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">Pass</span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4">No results available yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ attendance_count|json_script:"attendance-count" }}
+{{ total_attendance|json_script:"total-attendance" }}
+<script>
+    const attendanceCount = JSON.parse(document.getElementById('attendance-count').textContent);
+    const totalAttendance = JSON.parse(document.getElementById('total-attendance').textContent);
+    const absentCount = Math.max(0, totalAttendance - attendanceCount);
+
+    const ctx = document.getElementById('attendanceChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Present', 'Absent'],
+            datasets: [{
+                data: [attendanceCount, absentCount || 1],
+                backgroundColor: ['#6366f1', '#fecaca'],
+                borderWidth: 0,
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            cutout: '80%',
+            plugins: {
+                legend: { display: false }
+            },
+            maintainAspectRatio: false
+        }
+    });
+</script>
+{% endblock %}
