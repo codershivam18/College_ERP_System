@@ -3,6 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import CustomUserCreationForm, AttendanceForm, ResultForm
 from .models import Attendance, Result, Fee, StudentProfile, TeacherProfile, Classroom, Subject
+def home(request):
+    return HttpResponse("School ERP System is Live 🚀")
+
+from .forms import CustomUserCreationForm, AttendanceForm, ResultForm
+from .models import Attendance, Result, Fee, StudentProfile, TeacherProfile, Classroom, Subject
 
 def register(request):
     if request.method == 'POST':
