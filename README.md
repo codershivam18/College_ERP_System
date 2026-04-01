@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Maa Saraswati Devi Shiksha Sansthan - School ERP
 
 A professional, state-of-the-art Education Resource Planning (ERP) system designed for **Maa Saraswati Devi Shiksha Sansthan**, located in Patauhan, Gola Bazar, Gorakhpur. Built with Python/Django, this system provides a seamless digital experience for administrators, teachers, and students.
@@ -101,4 +101,4 @@ README.md: A professional guide for anyone viewing your GitHub repository.
 seed_data.py: A custom script I wrote to populate your database with initial data (like your first admin, classrooms, and subjects) for testing.
 This project is now a "State-of-the-Art" ERP system, ready for the school's official use!
 
->>>>>>> 71101fe135945c6dba21e22523c67dd0a3aae6f5
+
