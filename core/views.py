@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import CustomUserCreationForm, AttendanceForm, ResultForm
@@ -7,8 +8,6 @@ from .models import Attendance, Result, Fee, StudentProfile, TeacherProfile, Cla
 
 from .forms import CustomUserCreationForm, AttendanceForm, ResultForm
 from .models import Attendance, Result, Fee, StudentProfile, TeacherProfile, Classroom, Subject
-def home(request):
-    return render(request, "core/home.html")
 def home(request):
     return HttpResponse("School ERP System is Live 🚀")
 def register(request):
